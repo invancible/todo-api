@@ -21,11 +21,12 @@ app.use(xss()); //Sanitize data against XSS attack
 app.use(hpp()); // Prevent parameter pollution
 
 // ROUTES
+app.use('/api/v1/auth', require('./routes/authRoutes'));
 
+// Error Handler
 app.all('*', (req, res, next) => {
   next(new AppError(`No path for ${req.originalUrl} in this server`, 404));
 });
-
 app.use(globalErrorHandler);
 
 module.exports = app;

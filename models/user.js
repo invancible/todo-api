@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const { Schema, model } = mongoose;
 
@@ -49,5 +50,17 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
+
+/* DOCUMENT MIDDLEWARE */
+
+// This will run for every req that involves password (ex. signup and change password)
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  this.password = await bcrypt.hash(this.password, 12); // Hash password
+
+  this.confirmPassword = undefined; // Don't save confirm password to DB
+  next();
+});
 
 module.exports = model('User', userSchema);

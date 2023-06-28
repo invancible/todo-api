@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 
 const HOURS = 24;
 const MINUTES = 60;
@@ -56,4 +57,20 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   // Send response with token
   sendResponseWithToken(newUser, 201, res);
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // Check if credentials are provided
+  if (!email || !password)
+    return next(new AppError('Email and password field is required', 400));
+
+  const user = await User.findOne({ email }).select('+password');
+
+  // Check if user doesn't exist or incorrect credentials
+  if (!user || !(await user.passwordMatched(password, user.password)))
+    return next(new AppError('Incorrect email or password', 401));
+
+  sendResponseWithToken(user, 200, res);
 });

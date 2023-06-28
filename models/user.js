@@ -63,4 +63,14 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+/* CUSTOM METHODS */
+
+// Check if password given match the corresponding password
+userSchema.methods.passwordMatched = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
 module.exports = model('User', userSchema);

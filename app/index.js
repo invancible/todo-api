@@ -7,7 +7,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 
 // Internal Dependencies
-const globalErrorHandler = require('./controllers/errorController');
+const globalErrorHandler = require('./utils/globalErrorHandler');
 const AppError = require('./utils/appError');
 
 const app = express();
